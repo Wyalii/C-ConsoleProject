@@ -1,11 +1,12 @@
 namespace Project
 {
-    class User
+    public class User
     {
         private string name;
         private string password;
         private int id;
         private int balance;
+        private bool isadmin;
 
         public string Name{
             get{return name;}
@@ -24,9 +25,15 @@ namespace Project
             set{balance = value;}
         }
 
+        public bool IsAdmin
+        {
+            get{return isadmin;}
+            set{isadmin = value;}
+        }
+
         public override string ToString()
         {
-            return $" Id: {Id}, Name: {Name}, Password: {Password}, Balance: {Balance}.";
+            return $" User - Id: {Id}, Name: {Name}, Password: {Password}, Balance: {Balance}, Admin: {IsAdmin}.";
         }
 
     }
