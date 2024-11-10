@@ -3,7 +3,7 @@ namespace Project
     public class Product
     {
         private string name;
-        private int id;
+        private string id;
         private int quantity;
         private int price;
 
@@ -13,7 +13,7 @@ namespace Project
            set{name = value;}
         }
 
-        public int Id
+        public string Id
         {
             get{return id;}
             set{id = value;}

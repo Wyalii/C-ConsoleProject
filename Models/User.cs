@@ -4,7 +4,7 @@ namespace Project
     {
         private string name;
         private string password;
-        private int id;
+        private string id;
         private int balance;
         private bool isadmin;
 
@@ -16,7 +16,7 @@ namespace Project
             get{return password;}
             set{password = value;}
         }
-        public int Id{
+        public string Id{
             get{ return id;}
             set {id = value;}
         }
