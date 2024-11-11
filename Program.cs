@@ -4,7 +4,7 @@
    {
      static void Main()
      {
-        RegistrationService registration = new RegistrationService();
+        RegistrationFunction registration = new RegistrationFunction();
         registration.Register("Giorgi","Password123",123);
         
      }

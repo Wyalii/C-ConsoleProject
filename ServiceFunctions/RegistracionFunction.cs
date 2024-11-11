@@ -1,8 +1,9 @@
+using System.Linq.Expressions;
 using System.Text.Json;
 
 namespace Project
 {
-    public class RegistrationService
+    public class RegistrationFunction
     {
 
         static private string GuidIdGenerator()
@@ -24,8 +25,10 @@ namespace Project
             var user = new User(){Name = name, Password = password, Balance = balance, IsAdmin = false,Id = GuidIdGenerator()};
             
 
-            if(!users.Exists(i => i.Id == user.Id))
+            try
             {
+              if(!users.Exists(i => i.Id == user.Id))
+             {
                users.Add(user);
 
                if(!File.Exists(FilePath)){
@@ -44,6 +47,12 @@ namespace Project
                }
             }else{
                 throw new UserAlredyExists($" EXCEPTION: User with id: {user.Id} alredy exists.");
+            }
+            }
+            catch (UserAlredyExists ex)
+            {
+              
+              Console.WriteLine(ex.Message);
             }
 
             
