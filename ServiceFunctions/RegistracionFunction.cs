@@ -6,15 +6,13 @@ namespace Project
     public class RegistrationFunction
     {
 
+        JsonCRUD jsonCRUD;
         static private string GuidIdGenerator()
         {
             return Guid.NewGuid().ToString();
         }
-         
-        public List<User>users = new List<User>()
-        {
-          new User(){Name = "AdminName", Password = "AdminPassword", Id = "ThisIsAdminId", Balance = 0},
-        };
+        UsersList usersList;
+
        public void Register(string name, string password, int balance)
        {
           if(password != "AdminPassword" && name != "AdminName")
@@ -24,27 +22,20 @@ namespace Project
 
             var user = new User(){Name = name, Password = password, Balance = balance, IsAdmin = false,Id = GuidIdGenerator()};
             
-
             try
             {
-              if(!users.Exists(i => i.Id == user.Id))
+              if(!usersList.users.Exists(i => i.Id == user.Id))
              {
-               users.Add(user);
+               usersList.users.Add(user);
 
                if(!File.Exists(FilePath)){
                 File.WriteAllText(FilePath,JsonSerializer.Serialize(new List<User>(), new JsonSerializerOptions{WriteIndented = true}));
                }
 
-               var readJsonFile = File.ReadAllText(FilePath);
-               var JsonUsersList = JsonSerializer.Deserialize<List<User>>(readJsonFile);
-               JsonUsersList.Add(user);
-               users = JsonUsersList;
-               var JsonSerialized = JsonSerializer.Serialize(JsonUsersList, new JsonSerializerOptions{WriteIndented = true});
-               File.WriteAllText(FilePath,JsonSerialized);
-               foreach(var item in users)
-               {
-                Console.WriteLine(item);
-               }
+               var ListOfUsers = jsonCRUD.GetDataFromFile(FilePath);
+               ListOfUsers.Add(user);
+               usersList.users = ListOfUsers;
+               var UsersInJson = jsonCRUD.PutDataToFile(FilePath,ListOfUsers);
             }else{
                 throw new UserAlredyExists($" EXCEPTION: User with id: {user.Id} alredy exists.");
             }
@@ -57,6 +48,8 @@ namespace Project
 
             
           }
+
+          
        }
     }
 }
