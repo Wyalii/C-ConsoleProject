@@ -6,12 +6,12 @@ namespace Project
     public class RegistrationFunction
     {
 
-        JsonCRUD jsonCRUD;
+        JsonCRUD jsonCRUD =  new JsonCRUD();
         static private string GuidIdGenerator()
         {
             return Guid.NewGuid().ToString();
         }
-        UsersList usersList;
+        UsersList usersList = new UsersList();
 
        public void Register(string name, string password, int balance)
        {
@@ -32,7 +32,7 @@ namespace Project
                 File.WriteAllText(FilePath,JsonSerializer.Serialize(new List<User>(), new JsonSerializerOptions{WriteIndented = true}));
                }
 
-               var ListOfUsers = jsonCRUD.GetDataFromFile(FilePath);
+               List<User> ListOfUsers = jsonCRUD.GetDataFromFile(FilePath);
                ListOfUsers.Add(user);
                usersList.users = ListOfUsers;
                var UsersInJson = jsonCRUD.PutDataToFile(FilePath,ListOfUsers);
@@ -42,7 +42,6 @@ namespace Project
             }
             catch (UserAlredyExists ex)
             {
-              
               Console.WriteLine(ex.Message);
             }
 
