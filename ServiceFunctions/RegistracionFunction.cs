@@ -7,18 +7,33 @@ namespace Project
     {
 
         JsonCRUD jsonCRUD =  new JsonCRUD();
+        UsersList usersList = new UsersList();
+        FilePathUtil FilePathUtil = new FilePathUtil();
         static private string GuidIdGenerator()
         {
             return Guid.NewGuid().ToString();
         }
-        UsersList usersList = new UsersList();
+        
 
        public void Register(string name, string password, int balance)
        {
+
+          try
+          {
+            if(password == "AdminPassword" || name == "AdminName" || name == "AdminPassword" || password == "AdminName")
+            {
+              throw new CantRegisterAdmin("EXCEPTION: Cannot Register Admin.");
+            }
+          }
+          catch (CantRegisterAdmin ex)
+          {
+            Console.WriteLine(ex.Message);
+          }
+
+
           if(password != "AdminPassword" && name != "AdminName")
           {
-            string DesktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string FilePath = Path.Combine(DesktopPath,"test.json");
+            
 
             var user = new User(){Name = name, Password = password, Balance = balance, IsAdmin = false,Id = GuidIdGenerator()};
             
@@ -28,14 +43,18 @@ namespace Project
              {
                usersList.users.Add(user);
 
-               if(!File.Exists(FilePath)){
-                File.WriteAllText(FilePath,JsonSerializer.Serialize(new List<User>(), new JsonSerializerOptions{WriteIndented = true}));
+               if(!File.Exists(FilePathUtil.FilePath)){
+                Console.WriteLine("File Doesn't Exists, Creating New File...");
+                File.WriteAllText(FilePathUtil.FilePath,JsonSerializer.Serialize(new List<User>(), new JsonSerializerOptions{WriteIndented = true}));
+                Console.WriteLine($"Created File at: {FilePathUtil.FilePath}");
                }
+               
 
-               List<User> ListOfUsers = jsonCRUD.GetDataFromFile(FilePath);
+               List<User> ListOfUsers = jsonCRUD.GetDataFromFile(FilePathUtil.FilePath);
                ListOfUsers.Add(user);
                usersList.users = ListOfUsers;
-               var UsersInJson = jsonCRUD.PutDataToFile(FilePath,ListOfUsers);
+               var UsersInJson = jsonCRUD.PutDataToFile(FilePathUtil.FilePath,ListOfUsers);
+               Console.WriteLine($"User: {user}, Signed Up.");
             }else{
                 throw new UserAlredyExists($" EXCEPTION: User with id: {user.Id} alredy exists.");
             }
