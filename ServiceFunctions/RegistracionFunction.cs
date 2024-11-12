@@ -42,13 +42,6 @@ namespace Project
               if(!usersList.users.Exists(i => i.Id == user.Id))
              {
 
-               if(!File.Exists(FilePathUtil.FilePath)){
-                Console.WriteLine("File Doesn't Exists, Creating New File...");
-                File.WriteAllText(FilePathUtil.FilePath,JsonSerializer.Serialize(usersList.users, new JsonSerializerOptions{WriteIndented = true}));
-                Console.WriteLine($"Created File at: {FilePathUtil.FilePath}");
-               }
-               
-
                List<User> ListOfUsers = jsonCRUD.GetDataFromFile(FilePathUtil.FilePath);
                ListOfUsers.Add(user);
                usersList.users = ListOfUsers;

@@ -3,15 +3,16 @@ namespace Project
 {
     public class LoginFunction
     {
-        public void Login(string name, string password)
+        public void Login(User user)
         {
            JsonCRUD jsonCRUD = new JsonCRUD();
            UsersList usersList = new UsersList();
-           FilePathUtil FilePathUtil = new FilePathUtil();
-           LogedInUser logedInUser = new LogedInUser();
+           LogedInUsersPath logedInUsersPath = new LogedInUsersPath();
+           FilePathUtil filePathUtil =  new FilePathUtil();
+           LogedInUsers logedInUsers = new LogedInUsers();
 
-           var Users = jsonCRUD.GetDataFromFile(FilePathUtil.FilePath);
-           var MatchingUser = Users.FirstOrDefault(u => u.Name == name && u.Password == password);
+           var Users = jsonCRUD.GetDataFromFile(filePathUtil.FilePath);
+           var MatchingUser = Users.FirstOrDefault(u => u.Name == user.Name && u.Password == user.Password && u.Id == user.Id);
 
            try
            {
@@ -22,8 +23,10 @@ namespace Project
              
              if(MatchingUser.Name != "AdminName" && MatchingUser.Password != "AdminPassword")
              {
+                
                 MatchingUser.LogedIn = true;
-                logedInUser.UserLogedIn.Add(MatchingUser);
+                logedInUsers.UsersLogedIn.Add(MatchingUser);
+                jsonCRUD.PutDataToFile(logedInUsersPath.FilePath,logedInUsers.UsersLogedIn);
                 Console.WriteLine($"User: {MatchingUser} LogedIn.");
                 
              }
