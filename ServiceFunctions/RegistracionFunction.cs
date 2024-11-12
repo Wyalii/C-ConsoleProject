@@ -35,17 +35,16 @@ namespace Project
           {
             
 
-            var user = new User(){Name = name, Password = password, Balance = balance, IsAdmin = false,Id = GuidIdGenerator()};
+            var user = new User(){Name = name, Password = password, Balance = balance, IsAdmin = false,Id = GuidIdGenerator(),LogedIn = false};
             
             try
             {
               if(!usersList.users.Exists(i => i.Id == user.Id))
              {
-               usersList.users.Add(user);
 
                if(!File.Exists(FilePathUtil.FilePath)){
                 Console.WriteLine("File Doesn't Exists, Creating New File...");
-                File.WriteAllText(FilePathUtil.FilePath,JsonSerializer.Serialize(new List<User>(), new JsonSerializerOptions{WriteIndented = true}));
+                File.WriteAllText(FilePathUtil.FilePath,JsonSerializer.Serialize(usersList.users, new JsonSerializerOptions{WriteIndented = true}));
                 Console.WriteLine($"Created File at: {FilePathUtil.FilePath}");
                }
                

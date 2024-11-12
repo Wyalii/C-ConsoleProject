@@ -5,7 +5,9 @@
      static void Main()
      {
         RegistrationFunction registration = new RegistrationFunction();
-        registration.Register("AdminName","Password123",123);
+        LoginFunction login =  new LoginFunction();
+        
+        registration.Register("Mariam","Password123",999999999);
         
         
      }

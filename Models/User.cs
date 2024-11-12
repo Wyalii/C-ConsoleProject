@@ -7,6 +7,7 @@ namespace Project
         private string id;
         private int balance;
         private bool isadmin;
+        private bool logedin;
 
         public string Name{
             get{return name;}
@@ -31,9 +32,15 @@ namespace Project
             set{isadmin = value;}
         }
 
+        public bool LogedIn
+        {
+            get{return logedin;}
+            set{logedin = value;}
+        }
+
         public override string ToString()
         {
-            return $" User - Id: {Id}, Name: {Name}, Password: {Password}, Balance: {Balance}, Admin: {IsAdmin}.";
+            return $" User - Id: {Id}, Name: {Name}, Password: {Password}, Balance: {Balance}, Admin: {IsAdmin}, LogedIn: {LogedIn}.";
         }
 
     }
