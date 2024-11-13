@@ -14,6 +14,7 @@ namespace Project
           }
            var readJsonFile = File.ReadAllText(filePath);
            var JsonUsersList = JsonSerializer.Deserialize<List<User>>(readJsonFile);
+
            return JsonUsersList;
         }
 

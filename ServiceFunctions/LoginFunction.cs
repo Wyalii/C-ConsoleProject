@@ -12,34 +12,37 @@ namespace Project
            LogedInUsers logedInUsers = new LogedInUsers();
 
            var Users = jsonCRUD.GetDataFromFile(filePathUtil.FilePath);
-           var MatchingUser = Users.FirstOrDefault(u => u.Name == user.Name && u.Password == user.Password && u.Id == user.Id);
-
+           
            try
            {
-            if(MatchingUser == null)
-           {
-            throw new UserDontExists("User with provided name or password doesn't exists.");
-           }
+            if(user == null)
+            {
+             throw new UserDontExists("User with provided name or password doesn't exists.");
+            }
+            User MatchingUser = Users.FirstOrDefault(u => u.Name.Trim().ToLower() == user.Name.Trim().ToLower() && u.Password.Trim().ToLower() == user.Password.Trim().ToLower() && u.Id.Trim().ToLower() == user.Id.Trim().ToLower());
              
-             if(MatchingUser.Name != "AdminName" && MatchingUser.Password != "AdminPassword")
+             if( MatchingUser != null)
              {
+               if(MatchingUser.Name != "AdminName" && MatchingUser.Password != "AdminPassword")
+               {
                 
                 MatchingUser.LogedIn = true;
                 logedInUsers.UsersLogedIn.Add(MatchingUser);
                 jsonCRUD.PutDataToFile(logedInUsersPath.FilePath,logedInUsers.UsersLogedIn);
                 Console.WriteLine($"User: {MatchingUser} LogedIn.");
                 
-             }
+               }
 
-             if(MatchingUser.Name == "AdminName" && MatchingUser.Password == "AdminPassword")
-             {
+               if(MatchingUser.Name == "AdminName" && MatchingUser.Password == "AdminPassword")
+               {
                 MatchingUser.IsAdmin = true;
                 MatchingUser.LogedIn = true;
                 logedInUsers.UsersLogedIn.Add(MatchingUser);
                 jsonCRUD.PutDataToFile(logedInUsersPath.FilePath,logedInUsers.UsersLogedIn);
                 Console.WriteLine($"Admin has Joined: {MatchingUser}");
-             }
+               }
             
+             }
            
            }
            catch (UserDontExists ex)

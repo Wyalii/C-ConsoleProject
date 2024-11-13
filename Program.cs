@@ -7,8 +7,8 @@
         RegistrationFunction registration = new RegistrationFunction();
         LoginFunction login =  new LoginFunction();
         RegisterService registerService = new RegisterService();
-        registerService.Registration();
-        
+        LoginService loginService = new LoginService();
+        loginService.LogIn();
         
         
         

@@ -4,9 +4,10 @@ namespace Project
 {
     public class LoginService 
     {
-        UsersList usersList = new UsersList();
         LoginFunction loginFunction = new LoginFunction();
         InputValidations inputValidations = new InputValidations();
+        JsonCRUD jsonCRUD = new JsonCRUD();
+        FilePathUtil FilePathUtil = new FilePathUtil();
         public void LogIn()
         {
           bool start = false;
@@ -19,35 +20,33 @@ namespace Project
           bool CheckBalanceInput;
           do
           {
-          Console.WriteLine("Login User.");
-          Console.WriteLine("Username:");
-          UserInputUsername = Console.ReadLine();
-          Console.WriteLine("Password:");
-          UserInputPassword = Console.ReadLine();
-          
-
-          CheckNameInput = inputValidations.StringInputValidate(UserInputUsername);
-          CheckPasswordInput = inputValidations.StringInputValidate(UserInputPassword);
+            Console.WriteLine("Login User.");
+            Console.WriteLine("Username:");
+            UserInputUsername = Console.ReadLine();
+            Console.WriteLine("Password:");
+            UserInputPassword = Console.ReadLine();
         
-          
-          if(CheckNameInput == false)
-          {
-            Console.WriteLine("Username Input was Invalid, try again.");
-            start = true;
-          }else if(CheckPasswordInput == false)
-          {
-            Console.WriteLine("Password Input was Invalid, try again.");
-            start = true;
-          }else{
-            start = false;
-          }
+            CheckNameInput = inputValidations.StringInputValidate(UserInputUsername);
+            CheckPasswordInput = inputValidations.StringInputValidate(UserInputPassword);
+        
+            if(CheckNameInput == false)
+            {
+              Console.WriteLine("Username Input was Invalid, try again.");
+              start = true;
+            }else if(CheckPasswordInput == false)
+            {
+              Console.WriteLine("Password Input was Invalid, try again.");
+              start = true;
+            }else{
+              start = false;
+            }
 
-          } while (start);
+           }while (start);
  
+           var ListFromJson = jsonCRUD.GetDataFromFile(FilePathUtil.FilePath);
 
-          var MatchingUser = usersList.users.Where(u => u.Name == UserInputUsername && u.Password == UserInputPassword);
-
-          
+           var MatchingUser = ListFromJson.FirstOrDefault(u => u.Name.Trim().ToLower() == UserInputUsername.Trim().ToLower() && u.Password.Trim().ToLower() == UserInputPassword.Trim().ToLower());
+           loginFunction.Login(MatchingUser);
         }
     }
 }
