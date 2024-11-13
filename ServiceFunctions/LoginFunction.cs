@@ -35,6 +35,8 @@ namespace Project
              {
                 MatchingUser.IsAdmin = true;
                 MatchingUser.LogedIn = true;
+                logedInUsers.UsersLogedIn.Add(MatchingUser);
+                jsonCRUD.PutDataToFile(logedInUsersPath.FilePath,logedInUsers.UsersLogedIn);
                 Console.WriteLine($"Admin has Joined: {MatchingUser}");
              }
             
