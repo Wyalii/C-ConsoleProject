@@ -18,48 +18,40 @@ namespace Project
        public void Register(string name, string password, double balance)
        {
 
-          try
-          {
+         try
+         {
+         
             if(password == "AdminPassword" || name == "AdminName" || name == "AdminPassword" || password == "AdminName")
             {
               throw new CantRegisterAdmin("EXCEPTION: Cannot Register Admin.");
             }
-          }
-          catch (CantRegisterAdmin ex)
-          {
-            Console.WriteLine(ex.Message);
-          }
-
-
-          if(password != "AdminPassword" && name != "AdminName")
-          {
             
+            List<User> ListOfUsers = jsonCRUD.GetDataFromFile(FilePathUtil.FilePath);
+            var existingUser = ListOfUsers.FirstOrDefault(u => u.Name == name);
+
+            if(existingUser != null)
+            {
+              throw new UserAlredyExists("user with same name alredy exists.");
+            }
 
             var user = new User(){Name = name, Password = password, Balance = balance, IsAdmin = false,Id = GuidIdGenerator(),LogedIn = false};
             
-            try
-            {
-              if(!usersList.users.Exists(i => i.Id == user.Id))
-             {
-
-               List<User> ListOfUsers = jsonCRUD.GetDataFromFile(FilePathUtil.FilePath);
-               ListOfUsers.Add(user);
-               usersList.users.AddRange(ListOfUsers);
-               var UsersInJson = jsonCRUD.PutDataToFile(FilePathUtil.FilePath,usersList.users);
-               Console.WriteLine($"User: {user}, Signed Up.");
-            }else{
-                throw new UserAlredyExists($" EXCEPTION: User with id: {user.Id} alredy exists.");
-            }
-            }
-            catch (UserAlredyExists ex)
-            {
-              Console.WriteLine(ex.Message);
-            }
-
-            
-          }
-
-          
+            ListOfUsers.Add(user);
+            var UsersInJson = jsonCRUD.PutDataToFile(FilePathUtil.FilePath,ListOfUsers);
+            Console.WriteLine($"User: {user}, Signed Up.");
+         }
+         catch (UserAlredyExists ex)
+         {
+            Console.WriteLine(ex.Message);
+         }
+         catch(CantRegisterAdmin ex)
+         {
+            Console.WriteLine(ex.Message);
+         }     
+       
        }
-    }
+        
+   }
+        
 }
+    
