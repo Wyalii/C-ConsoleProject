@@ -7,17 +7,18 @@ namespace Project
         LoginFunction loginFunction = new LoginFunction();
         InputValidations inputValidations = new InputValidations();
         JsonCRUD jsonCRUD = new JsonCRUD();
-        FilePathUtil FilePathUtil = new FilePathUtil();
+        RegisteredUsersPath registeredUsersPath = new RegisteredUsersPath();
+        
         public void LogIn()
         {
           bool start = false;
           
           string UserInputUsername;
           string UserInputPassword;
-          string BalanceInput;
+          
           bool CheckNameInput;
           bool CheckPasswordInput;
-          bool CheckBalanceInput;
+          
           do
           {
             Console.WriteLine("Login User.");
@@ -41,12 +42,15 @@ namespace Project
               start = false;
             }
 
+           var ListFromJson = jsonCRUD.GetDataFromFile(registeredUsersPath.FilePath);
+
+           var MatchingUser = ListFromJson.FirstOrDefault(u => u.Name == UserInputUsername && u.Password == UserInputPassword);
+           var sheshvla = loginFunction.Login(MatchingUser);
+
            }while (start);
  
-           var ListFromJson = jsonCRUD.GetDataFromFile(FilePathUtil.FilePath);
-
-           var MatchingUser = ListFromJson.FirstOrDefault(u => u.Name.Trim().ToLower() == UserInputUsername.Trim().ToLower() && u.Password.Trim().ToLower() == UserInputPassword.Trim().ToLower());
-           loginFunction.Login(MatchingUser);
+           
+        
         }
     }
 }

@@ -3,54 +3,67 @@ namespace Project
 {
     public class LoginFunction
     {
-        public void Login(User user)
+        public bool Login(User user)
         {
            JsonCRUD jsonCRUD = new JsonCRUD();
            UsersList usersList = new UsersList();
            LogedInUsersPath logedInUsersPath = new LogedInUsersPath();
-           FilePathUtil filePathUtil =  new FilePathUtil();
-           LogedInUsers logedInUsers = new LogedInUsers();
+           LogedInUsers logedInUsersList = new LogedInUsers();
+           RegisteredUsersPath registeredUsersPath = new RegisteredUsersPath();
 
-           var Users = jsonCRUD.GetDataFromFile(filePathUtil.FilePath);
            
-           try
+           
+           var LogedInUsersJson = jsonCRUD.GetDataFromFile(logedInUsersPath.FilePath);
+           
+           
+            try
            {
+
             if(user == null)
             {
              throw new UserDontExists("User with provided name or password doesn't exists.");
-            }
-            User MatchingUser = Users.FirstOrDefault(u => u.Name.Trim().ToLower() == user.Name.Trim().ToLower() && u.Password.Trim().ToLower() == user.Password.Trim().ToLower() && u.Id.Trim().ToLower() == user.Id.Trim().ToLower());
              
-             if( MatchingUser != null)
-             {
-               if(MatchingUser.Name != "AdminName" && MatchingUser.Password != "AdminPassword")
+            }
+
+               if(user.Name != "AdminName" && user.Password != "AdminPassword")
                {
                 
-                MatchingUser.LogedIn = true;
-                logedInUsers.UsersLogedIn.Add(MatchingUser);
-                jsonCRUD.PutDataToFile(logedInUsersPath.FilePath,logedInUsers.UsersLogedIn);
-                Console.WriteLine($"User: {MatchingUser} LogedIn.");
+                user.LogedIn = true;
+                LogedInUsersJson.Clear();
+                LogedInUsersJson.Add(user);
+                jsonCRUD.PutDataToFile(logedInUsersPath.FilePath,LogedInUsersJson);
+                Console.WriteLine($"User: {user} LogedIn.");
+                return false;
                 
                }
 
-               if(MatchingUser.Name == "AdminName" && MatchingUser.Password == "AdminPassword")
+               if(user.Name == "AdminName" && user.Password == "AdminPassword")
                {
-                MatchingUser.IsAdmin = true;
-                MatchingUser.LogedIn = true;
-                logedInUsers.UsersLogedIn.Add(MatchingUser);
-                jsonCRUD.PutDataToFile(logedInUsersPath.FilePath,logedInUsers.UsersLogedIn);
-                Console.WriteLine($"Admin has Joined: {MatchingUser}");
+                user.IsAdmin = true;
+                user.LogedIn = true;
+                LogedInUsersJson.Clear();
+                LogedInUsersJson.Add(user);
+                jsonCRUD.PutDataToFile(logedInUsersPath.FilePath,LogedInUsersJson);
+                Console.WriteLine($"Admin has Joined: {user}");
+                return false;
+                
                }
-            
-             }
            
            }
            catch (UserDontExists ex)
            {
             Console.WriteLine(ex.Message);
+            return true;
+           
+           }
+           catch(UserAlreadyLogedIn ex)
+           {
+             Console.WriteLine(ex.Message);
+             return true;
            }
 
            
+           return false;
         }
     }
 }

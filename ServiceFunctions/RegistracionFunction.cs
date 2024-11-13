@@ -7,8 +7,7 @@ namespace Project
     {
 
         JsonCRUD jsonCRUD =  new JsonCRUD();
-        UsersList usersList = new UsersList();
-        FilePathUtil FilePathUtil = new FilePathUtil();
+        RegisteredUsersPath registeredUsersPath = new RegisteredUsersPath();
         static private string GuidIdGenerator()
         {
             return Guid.NewGuid().ToString();
@@ -26,7 +25,7 @@ namespace Project
               throw new CantRegisterAdmin("EXCEPTION: Cannot Register Admin.");
             }
             
-            List<User> ListOfUsers = jsonCRUD.GetDataFromFile(FilePathUtil.FilePath);
+            List<User> ListOfUsers = jsonCRUD.GetDataFromFile(registeredUsersPath.FilePath);
             var existingUser = ListOfUsers.FirstOrDefault(u => u.Name == name);
 
             if(existingUser != null)
@@ -37,7 +36,7 @@ namespace Project
             var user = new User(){Name = name, Password = password, Balance = balance, IsAdmin = false,Id = GuidIdGenerator(),LogedIn = false};
             
             ListOfUsers.Add(user);
-            var UsersInJson = jsonCRUD.PutDataToFile(FilePathUtil.FilePath,ListOfUsers);
+            var UsersInJson = jsonCRUD.PutDataToFile(registeredUsersPath.FilePath,ListOfUsers);
             Console.WriteLine($"User: {user}, Signed Up.");
          }
          catch (UserAlredyExists ex)

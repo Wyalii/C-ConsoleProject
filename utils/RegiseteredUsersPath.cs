@@ -1,6 +1,6 @@
 namespace Project
 {
-    public class FilePathUtil
+    public class RegisteredUsersPath
     {
         private static string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         private string filePath = Path.Combine(desktopPath,"test.json");
