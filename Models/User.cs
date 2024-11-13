@@ -5,7 +5,7 @@ namespace Project
         private string name;
         private string password;
         private string id;
-        private int balance;
+        private double balance;
         private bool isadmin;
         private bool logedin;
 
@@ -21,7 +21,7 @@ namespace Project
             get{ return id;}
             set {id = value;}
         }
-        public int Balance {
+        public double Balance {
             get{return balance;}
             set{balance = value;}
         }

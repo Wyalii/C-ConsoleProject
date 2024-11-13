@@ -22,7 +22,7 @@ namespace Project
 
           if(!File.Exists(filePath)){
                 Console.WriteLine("File Doesn't Exists, Creating New File...");
-                File.WriteAllText(filePath,JsonSerializer.Serialize(usersList.users, new JsonSerializerOptions{WriteIndented = true}));
+                File.WriteAllText(filePath,JsonSerializer.Serialize(jsonUsersList, new JsonSerializerOptions{WriteIndented = true}));
                 Console.WriteLine($"Created File at: {filePath}");
           }
           

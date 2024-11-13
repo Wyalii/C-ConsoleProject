@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
 namespace Project
@@ -6,61 +7,48 @@ namespace Project
     {
         public void Registration()
         {
-          int number;
+          RegistrationFunction registration = new RegistrationFunction();
+          InputValidations inputValidations = new InputValidations();
+
+          bool start = false;
+          
+          string UserInputUsername;
+          string UserInputPassword;
+          string BalanceInput;
+          do
+          {
           Console.WriteLine("Create Your Name, Password, Balance.");
           Console.WriteLine("Username:");
-          string UserInputUsername = Console.ReadLine();
+          UserInputUsername = Console.ReadLine();
           Console.WriteLine("Password:");
-          string UserInputPassword = Console.ReadLine();
+          UserInputPassword = Console.ReadLine();
           Console.WriteLine("Balance:");
-          double Double;
-          string BalanceInput = Console.ReadLine();
+          BalanceInput = Console.ReadLine();
 
-
-         try
-         {
-            if(!Regex.IsMatch(BalanceInput,@"^\d+(\.\d+)?$"))
-          {
-            throw new OnlyInt("EXCEPTION: Balance should only contain numbers.");
-          }
-
-
-          if(string.IsNullOrWhiteSpace(UserInputUsername))
-          {
-            throw new NullSpaceInput("EXCEPTION: Username Cannot contain only empty spaces and it cant be null.");
-          }
-
-          if(Regex.IsMatch(UserInputUsername,@"^\d+$"))
-          {
-            throw new OnlyIntInput("EXCEPTION: Username cant be integers only.");
-          }
-
-          if(string.IsNullOrWhiteSpace(UserInputPassword))
-          {
-            throw new NullSpaceInput("EXCEPTION: Password Cannot contain only empty spaces and it cant be null.");
-          }
-
-          if(Regex.IsMatch(UserInputPassword,@"^\d+$"))
-          {
-            throw new OnlyIntInput("EXCEPTION: Password cant be integers only.");
-          }
+          bool CheckNameInput = inputValidations.StringInputValidate(UserInputUsername);
+          bool CheckPasswordInput = inputValidations.StringInputValidate(UserInputPassword);
+          bool CheckBalanceInput = inputValidations.NumbersInputValidation(BalanceInput);
           
-         }
-         catch (OnlyInt ex)
-         {
-           Console.WriteLine(ex.Message);
-         }
-         catch(NullSpaceInput ex)
-         {
-           Console.WriteLine(ex.Message);
-         }
-         catch(OnlyIntInput ex)
-         {
-            Console.WriteLine(ex.Message);
-         }
+          if(CheckNameInput == false)
+          {
+            Console.WriteLine("Username Input was Invalid, try again.");
+            start = true;
+          }else if(CheckPasswordInput == false)
+          {
+            Console.WriteLine("Password Input was Invalid, try again.");
+            start = true;
+          }else if(CheckBalanceInput == false)
+          {
+            Console.WriteLine("Balance Input was Invalid, try again.");
+            start = true;
+          }else{
+            start = false;
+          }
 
+          } while (start);
 
-           double UserInputBalance = double.Parse(BalanceInput);         
+          double UserInputBalance = double.Parse(BalanceInput); 
+          registration.Register(UserInputUsername,UserInputPassword,UserInputBalance);        
 
         }
     }

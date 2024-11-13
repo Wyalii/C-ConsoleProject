@@ -15,7 +15,7 @@ namespace Project
         }
         
 
-       public void Register(string name, string password, int balance)
+       public void Register(string name, string password, double balance)
        {
 
           try
@@ -44,8 +44,8 @@ namespace Project
 
                List<User> ListOfUsers = jsonCRUD.GetDataFromFile(FilePathUtil.FilePath);
                ListOfUsers.Add(user);
-               usersList.users = ListOfUsers;
-               var UsersInJson = jsonCRUD.PutDataToFile(FilePathUtil.FilePath,ListOfUsers);
+               usersList.users.AddRange(ListOfUsers);
+               var UsersInJson = jsonCRUD.PutDataToFile(FilePathUtil.FilePath,usersList.users);
                Console.WriteLine($"User: {user}, Signed Up.");
             }else{
                 throw new UserAlredyExists($" EXCEPTION: User with id: {user.Id} alredy exists.");
