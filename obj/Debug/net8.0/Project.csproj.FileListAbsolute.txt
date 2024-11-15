@@ -12,3 +12,4 @@
 /home/wyalii/Desktop/Project/obj/Debug/net8.0/Project.pdb
 /home/wyalii/Desktop/Project/obj/Debug/net8.0/Project.genruntimeconfig.cache
 /home/wyalii/Desktop/Project/obj/Debug/net8.0/ref/Project.dll
+/home/wyalii/Desktop/Project/obj/Debug/net8.0/Project.sourcelink.json

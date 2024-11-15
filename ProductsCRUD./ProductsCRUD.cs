@@ -148,7 +148,7 @@ namespace Project
                             Console.WriteLine($"Product Removed: {ProductToRemove}");
                             start = false;
                         }else{
-                            throw new Exception($"Product: {ProductToRemove.Id}, doesnt exists, try again.");
+                            throw new Exception($"Product: {ProductToRemove.Id}, doesnt exists, try again");
                         }
 
                 }
@@ -157,7 +157,7 @@ namespace Project
                   Console.WriteLine(ex.Message);
                   start = true;
                 }
-            } while (false);
+            } while (start);
         }
 
         public void UpdateProduct()
@@ -178,25 +178,56 @@ namespace Project
                     }
 
                     var getProducts = JsonSerializer.Deserialize<List<Product>>(File.ReadAllText(ProductsListRoute));
+                    if (getProducts == null || getProducts.Count == 0)
+                    {
+                        Console.WriteLine("No products found to update.");
+                        return;
+                    }
+
+
                     Console.WriteLine("Write Product ID to Update Product");
                     string id = Console.ReadLine();
                     var MatchingProduct = getProducts.FirstOrDefault(p => p.Id == id);
                     if(MatchingProduct == null)
                     {
-                        throw new Exception($"Product with ID: {id}, Doesn't Exists, try again.");
+                        Console.WriteLine($"Product with ID: {id}, Doesn't Exists, try again.");
+                        continue;
                     }
                     
                       Console.WriteLine("Write New Product Name:");
                       string NewName = Console.ReadLine();
+                      while (string.IsNullOrWhiteSpace(NewName) || !Regex.IsMatch(NewName,@"[a-zA-Z]"))
+                      {
+                         Console.WriteLine($"Invalid Input: {NewName}, please try again.");
+                         NewName = Console.ReadLine();
+                      }
+
+
                       Console.WriteLine("Write New Product Price:");
-                      double NewPrice = double.Parse(Console.ReadLine());
+                      
+                      double NewPrice;
+                      while (!double.TryParse(Console.ReadLine(),out NewPrice))
+                      {
+                         Console.WriteLine($"Invalid Price Input, please try again.");
+                      }
+
                       Console.WriteLine("Write New Product Quantity:");
-                      int NewQuantity = int.Parse(Console.ReadLine());
-                      Product UpdatedProduct = new Product(){Name = NewName, Price = NewPrice, Quantity = NewQuantity, Id = id};
-                      MatchingProduct = UpdatedProduct;
-                      getProducts.Add(MatchingProduct);
+                      int NewQuantity;
+
+                      while(!int.TryParse(Console.ReadLine(), out NewQuantity))
+                      {
+                         Console.WriteLine($"Invalid Quantity Input, please try again.");
+                      }
+
+
+                      
+                      MatchingProduct.Name = NewName;
+                      MatchingProduct.Price = NewPrice;
+                      MatchingProduct.Quantity = NewQuantity;
+
                       var JsonProducts = JsonSerializer.Serialize(getProducts);
                       File.WriteAllText(ProductsListRoute,JsonProducts);
+                      Console.WriteLine($"Updated Product: {MatchingProduct.Name}.");
                       start = false;
                     
                     
@@ -207,7 +238,7 @@ namespace Project
                     start = true;
 
                 }
-            } while (true);
+            } while (start);
         }
     }
 }

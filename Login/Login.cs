@@ -64,6 +64,7 @@ namespace Project
 
               user = MatchingUser;
               var LogedInUser = JsonSerializer.Deserialize<List<User>>(File.ReadAllText(LoggedInUsersRoute));
+              LogedInUser.Clear();
               LogedInUser.Add(MatchingUser);
               var JsonUser = JsonSerializer.Serialize(LogedInUser);
               File.WriteAllText(LoggedInUsersRoute,JsonUser);
