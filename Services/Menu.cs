@@ -62,7 +62,7 @@ namespace Project
             Console.WriteLine("2-AddProduct");
             Console.WriteLine("3-RemoveProduct");
             Console.WriteLine("4-UpdateProduct");
-            Console.WriteLine("5-Loggout");
+            Console.WriteLine("5-Exit");
             int chocie = int.Parse(Console.ReadLine());
             switch (chocie)
             {
@@ -158,7 +158,7 @@ namespace Project
             Console.WriteLine("User Services:");
             Console.WriteLine("1-PrintProducts");
             Console.WriteLine("2-BuyProduct");
-            Console.WriteLine("3-CheckBalance");
+            Console.WriteLine("3-PrintPurchasesHistory");
             Console.WriteLine("4-UpdateBalance");
             Console.WriteLine("5-Exit");
             int chocie = int.Parse(Console.ReadLine());
@@ -181,6 +181,7 @@ namespace Project
                 break;
 
               case 2:
+                productsCRUD.BuyProduct();
                 Console.WriteLine(" do you want to continue app?");
                 Console.WriteLine("Y/N");
                 choice = Console.ReadLine();
@@ -197,6 +198,7 @@ namespace Project
 
 
               case 3:
+                productsCRUD.PrintPurchasesHistory();
                 Console.WriteLine(" do you want to continue app?");
                 Console.WriteLine("Y/N");
                 choice = Console.ReadLine();
