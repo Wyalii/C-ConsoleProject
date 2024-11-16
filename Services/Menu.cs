@@ -7,6 +7,7 @@ namespace Project
     Registration registration = new Registration();
     Login login = new Login();
     ProductsCRUD productsCRUD = new ProductsCRUD();
+    Logout logout = new Logout();
     public bool RegAndLoginMenu()
     {
 
@@ -138,7 +139,8 @@ namespace Project
                 break;
 
               case 5:
-
+                logout.Exit();
+                start = false;
                 break;
 
 
@@ -233,6 +235,7 @@ namespace Project
                 break;
 
               case 5:
+                logout.Exit();
                 start = false;
                 break;
 

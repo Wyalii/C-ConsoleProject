@@ -86,6 +86,7 @@ namespace Project
                 string id = GuidIdGenerator();
 
                 Product product = new Product() { Name = name, Price = price, Id = id, Quantity = quantity };
+
                 if (!File.Exists(ProductsListRoute))
                 {
                     Console.WriteLine("Creating File..");
@@ -99,10 +100,20 @@ namespace Project
 
                 var getData = File.ReadAllText(ProductsListRoute);
                 var getProducts = JsonSerializer.Deserialize<List<Product>>(getData);
-                getProducts.Add(product);
-                var JsonedList = JsonSerializer.Serialize(getProducts);
-                File.WriteAllText(ProductsListRoute, JsonedList);
-                Console.WriteLine($"added product: {product.Name}");
+                var MatchingProduct = getProducts.FirstOrDefault(p => p.Name == product.Name);
+                if (MatchingProduct != null)
+                {
+                    Console.WriteLine("Product already exists.");
+
+                }
+                else
+                {
+                    getProducts.Add(product);
+                    var JsonedList = JsonSerializer.Serialize(getProducts);
+                    File.WriteAllText(ProductsListRoute, JsonedList);
+                    Console.WriteLine($"added product: {product.Name}");
+                }
+
 
 
 
@@ -119,6 +130,7 @@ namespace Project
         {
             var Desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var ProductsListRoute = Path.Combine(Desktop, "Products.json");
+            var PurchasedListRoute = Path.Combine(Desktop, "UserPurchases.json");
             bool start = false;
 
             do
@@ -136,6 +148,7 @@ namespace Project
                         Console.WriteLine($"Created File at : {ProductsListRoute}");
                     }
                     var getProducts = JsonSerializer.Deserialize<List<Product>>(File.ReadAllText(ProductsListRoute));
+
                     if (getProducts == null || getProducts.Count == 0)
                     {
                         Console.WriteLine("no products to remove.");
@@ -143,12 +156,25 @@ namespace Project
                     }
                     Console.WriteLine("Write ID to Remove Product:");
                     string id = Console.ReadLine();
+
                     var ProductToRemove = getProducts.FirstOrDefault(u => u.Id == id);
 
                     if (ProductToRemove == null)
                     {
                         Console.WriteLine($"Product: {id}, doesnt exists, try again");
                         continue;
+                    }
+
+
+                    if (File.Exists(PurchasedListRoute))
+                    {
+                        var getPurchased = JsonSerializer.Deserialize<List<Product>>(File.ReadAllText(PurchasedListRoute));
+
+                        getPurchased.RemoveAll(p => p.Id == id);
+                        File.WriteAllText(PurchasedListRoute, JsonSerializer.Serialize(getPurchased));
+
+
+
                     }
 
                     getProducts.Remove(ProductToRemove);
@@ -169,6 +195,7 @@ namespace Project
         {
             var Desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var ProductsListRoute = Path.Combine(Desktop, "Products.json");
+            var PurchasedListRoute = Path.Combine(Desktop, "UserPurchases.json");
             bool start = false;
 
             do
@@ -186,7 +213,11 @@ namespace Project
                         Console.WriteLine($"Created File at : {ProductsListRoute}");
                     }
 
+
+
                     var getProducts = JsonSerializer.Deserialize<List<Product>>(File.ReadAllText(ProductsListRoute));
+                    var getPurchases = JsonSerializer.Deserialize<List<Product>>(File.ReadAllText(PurchasedListRoute));
+
                     if (getProducts == null || getProducts.Count == 0)
                     {
                         Console.WriteLine("No products found to update.");
@@ -197,6 +228,7 @@ namespace Project
                     Console.WriteLine("Write Product ID to Update Product");
                     string id = Console.ReadLine();
                     var MatchingProduct = getProducts.FirstOrDefault(p => p.Id == id);
+
                     if (MatchingProduct == null)
                     {
                         Console.WriteLine($"Product with ID: {id}, Doesn't Exists, try again.");
@@ -230,9 +262,28 @@ namespace Project
 
 
 
+                    if (File.Exists(PurchasedListRoute))
+                    {
+
+                        getPurchases.ForEach(p =>
+                        {
+                            if (p.Id == id)
+                            {
+                                p.Name = NewName;
+                                p.Price = NewPrice;
+                                p.Quantity = NewQuantity;
+                            }
+                        });
+
+                        var UpdatedPurchases = JsonSerializer.Serialize(getPurchases);
+                        File.WriteAllText(PurchasedListRoute, UpdatedPurchases);
+
+                    }
+
                     MatchingProduct.Name = NewName;
                     MatchingProduct.Price = NewPrice;
                     MatchingProduct.Quantity = NewQuantity;
+
 
                     var JsonProducts = JsonSerializer.Serialize(getProducts);
                     File.WriteAllText(ProductsListRoute, JsonProducts);
