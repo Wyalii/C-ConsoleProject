@@ -219,6 +219,7 @@ namespace Project
 
 
               case 4:
+                productsCRUD.UpdateBalance();
                 Console.WriteLine(" do you want to continue app?");
                 Console.WriteLine("Y/N");
                 choice = Console.ReadLine();

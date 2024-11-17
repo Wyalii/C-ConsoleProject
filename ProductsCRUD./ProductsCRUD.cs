@@ -152,7 +152,7 @@ namespace Project
                     if (getProducts == null || getProducts.Count == 0)
                     {
                         Console.WriteLine("no products to remove.");
-                        return;
+                        break;
                     }
                     Console.WriteLine("Write ID to Remove Product:");
                     string id = Console.ReadLine();
@@ -162,7 +162,7 @@ namespace Project
                     if (ProductToRemove == null)
                     {
                         Console.WriteLine($"Product: {id}, doesnt exists, try again");
-                        continue;
+                        break;
                     }
 
 
@@ -172,8 +172,6 @@ namespace Project
 
                         getPurchased.RemoveAll(p => p.Id == id);
                         File.WriteAllText(PurchasedListRoute, JsonSerializer.Serialize(getPurchased));
-
-
 
                     }
 
@@ -232,7 +230,7 @@ namespace Project
                     if (MatchingProduct == null)
                     {
                         Console.WriteLine($"Product with ID: {id}, Doesn't Exists, try again.");
-                        continue;
+                        break;
                     }
 
                     Console.WriteLine("Write New Product Name:");
@@ -371,12 +369,13 @@ namespace Project
                     {
                         Console.WriteLine("No Products left to buy.");
                     }
-                    var newUsersBalance = getLoggedInUser.Balance - MatchingProduct.Price;
+                    var newLoggedInBalance = getLoggedInUser.Balance - MatchingProduct.Price;
+                    var newRegisteredBalance = getRegisteredUser.Balance - MatchingProduct.Price;
                     var newProductQuantity = MatchingProduct.Quantity - 1;
 
                     MatchingProduct.Quantity = newProductQuantity;
-                    getLoggedInUser.Balance = newUsersBalance;
-                    getRegisteredUser.Balance = newUsersBalance;
+                    getLoggedInUser.Balance = newLoggedInBalance;
+                    getRegisteredUser.Balance = newRegisteredBalance;
 
 
 
@@ -386,14 +385,24 @@ namespace Project
 
                     File.WriteAllText(ProductsListRoute, JsonSerializer.Serialize(getProducts));
 
-                    userPurchases.Add(MatchingProduct);
+                    Product PurchasedProduct = new Product()
+                    {
+                        Id = MatchingProduct.Id,
+                        Name = MatchingProduct.Name,
+                        Price = MatchingProduct.Price,
+                        Quantity = MatchingProduct.Quantity,
+                        Owner = getLoggedInUser.Id,
+                    };
+
+                    userPurchases.Add(PurchasedProduct);
+
                     File.WriteAllText(UserPurchasesRoute, JsonSerializer.Serialize(userPurchases));
                     Console.WriteLine($"Purchased:{MatchingProduct.Name}");
                 }
                 else
                 {
                     Console.WriteLine("Not Enough Balance, please update your balance.");
-                    continue;
+                    break;
                 }
 
 
@@ -408,20 +417,98 @@ namespace Project
             {
                 var Desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 var PurchasesRoute = Path.Combine(Desktop, "UserPurchases.json");
+                var LoggedInUserRoute = Path.Combine(Desktop, "LoggedInUsers.json");
+
+                if (!File.Exists(LoggedInUserRoute))
+                {
+                    Console.WriteLine("User is not logged in.");
+                    break;
+                }
+
                 if (!File.Exists(PurchasesRoute))
                 {
                     Console.WriteLine("User has not bought anything.");
                     break;
                 }
                 var getPurchasedHistory = JsonSerializer.Deserialize<List<Product>>(File.ReadAllText(PurchasesRoute));
-                if (getPurchasedHistory == null)
+                var getLoggedInUsersList = JsonSerializer.Deserialize<List<User>>(File.ReadAllText(LoggedInUserRoute));
+                var getLoggedInUser = getLoggedInUsersList.First();
+
+                if (getPurchasedHistory == null || getPurchasedHistory.Count() == 0)
                 {
                     Console.WriteLine("User has not bought anything");
                 }
-                foreach (var product in getPurchasedHistory)
+                var getAllPurchasedProducts = getPurchasedHistory.FindAll(p => p.Owner == getLoggedInUser.Id);
+                if (getAllPurchasedProducts == null)
+                {
+                    Console.WriteLine("User has no Purchase History.");
+                }
+                foreach (var product in getAllPurchasedProducts)
                 {
                     Console.WriteLine($"User Has Bought: {product.Name} for {product.Price}$");
                 }
+            } while (start);
+        }
+
+        public void UpdateBalance()
+        {
+            bool start = false;
+
+            do
+            {
+                var Desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                var RegisteredUsersRoute = Path.Combine(Desktop, "RegisteredUsers.json");
+                var LoggedInUsersRoute = Path.Combine(Desktop, "LoggedInUsers.json");
+
+                if (!File.Exists(LoggedInUsersRoute))
+                {
+                    Console.WriteLine("User is not logged in.");
+                    break;
+                }
+
+                if (!File.Exists(RegisteredUsersRoute))
+                {
+                    Console.WriteLine("User is not registered.");
+                    break;
+                }
+
+                var LoggedInUsersList = JsonSerializer.Deserialize<List<User>>(File.ReadAllText(LoggedInUsersRoute));
+                var LoggedInUser = LoggedInUsersList.First();
+                var registeredUsersList = JsonSerializer.Deserialize<List<User>>(File.ReadAllText(RegisteredUsersRoute));
+                var RegisteredUser = registeredUsersList.FirstOrDefault(u => u.Id == LoggedInUser.Id);
+
+                if (RegisteredUser == null)
+                {
+                    Console.WriteLine("User is not registered.");
+                    break;
+                }
+
+                if (LoggedInUser == null)
+                {
+                    Console.WriteLine("User is not logged in.");
+                    break;
+                }
+
+                Console.WriteLine($"User: {LoggedInUser.Name}'s Balance is: {LoggedInUser.Balance}");
+                Console.WriteLine("Update your Balance:");
+                double balance;
+                while (!double.TryParse(Console.ReadLine(), out balance))
+                {
+                    Console.WriteLine($"Invalid Price Input, please try again.");
+                }
+
+                var NewBalance1 = LoggedInUser.Balance + balance;
+                LoggedInUser.Balance = NewBalance1;
+                var NewBalance2 = RegisteredUser.Balance + balance;
+                RegisteredUser.Balance = NewBalance2;
+
+                Console.WriteLine($"{LoggedInUser.Name}'s new balance:{NewBalance1}");
+
+                File.WriteAllText(LoggedInUsersRoute, JsonSerializer.Serialize(LoggedInUsersList));
+                File.WriteAllText(RegisteredUsersRoute, JsonSerializer.Serialize(registeredUsersList));
+
+
+
             } while (start);
         }
     }
